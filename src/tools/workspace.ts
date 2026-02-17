@@ -43,8 +43,15 @@ export async function handleGetWorkspaceHierarchy() {
     // Generate tree representation
     const treeOutput = formatTreeOutput(hierarchy);
     
-    // Use sponsor service to create the response with optional sponsor message
-    return sponsorService.createResponse({ hierarchy: treeOutput }, true);
+// Returner kun hierarkiet uden sponsor-beskeden
+    return {
+      content: [
+        {
+          type: "text",
+          text: treeOutput
+        }
+      ]
+    };
   } catch (error: any) {
     return sponsorService.createErrorResponse(`Error getting workspace hierarchy: ${error.message}`);
   }
