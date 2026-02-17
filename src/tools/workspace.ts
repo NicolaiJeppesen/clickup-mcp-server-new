@@ -53,7 +53,15 @@ export async function handleGetWorkspaceHierarchy() {
       ]
     };
   } catch (error: any) {
-    return sponsorService.createErrorResponse(`Error getting workspace hierarchy: ${error.message}`);
+    return {
+      content: [
+        {
+          type: "text",
+          text: `Error getting workspace hierarchy: ${error.message}`
+        }
+      ],
+      isError: true
+    };
   }
 }
 
