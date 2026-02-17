@@ -174,8 +174,9 @@ export function configureServer() {
   // Register ListTools handler
   server.setRequestHandler(ListToolsRequestSchema, async () => {
     logger.debug("Received ListTools request");
-    return {
-      tools: [
+    
+    // Saml alle værktøjer i en liste først
+    const rawTools = [
         workspaceHierarchyTool,
         createTaskTool,
         getTaskTool,
@@ -217,8 +218,19 @@ export function configureServer() {
         findMemberByNameTool,
         resolveAssigneesTool,
         ...documentModule()
-      ].filter(tool => isToolEnabled(tool.name))
-    };
+      ].filter(tool => isToolEnabled(tool.name));
+
+    // FIX: Patch alle værktøjer så de har type: "object" i inputSchema.
+    // Dette løser fejlen i n8n uden at vi skal redigere hver enkelt fil.
+    const tools = rawTools.map(tool => ({
+        ...tool,
+        inputSchema: {
+            type: "object",
+            ...tool.inputSchema
+        }
+    }));
+
+    return { tools };
   });
 
   // Add handler for resources/list
